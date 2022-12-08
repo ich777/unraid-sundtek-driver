@@ -91,7 +91,7 @@ if [ ! -f &plugin;/sundtek_install.sh ]; then
   wget -q -O &plugin;/sundtek_install.sh http://sundtek.de/media/sundtek_netinst.sh
   sed -i "s/NETINSTALL=1/NETINSTALL=0/g" &plugin;/sundtek_install.sh/sundtek_install.sh
 else
-  echo "---Sundtek installastion script found locally---"
+  echo "---Sundtek installation script found locally---"
 fi
 
 # Copy over 99-sundtekdriverinstall
