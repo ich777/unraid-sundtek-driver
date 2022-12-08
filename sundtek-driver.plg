@@ -1,0 +1,122 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+  <!ENTITY name      "sundtek-driver">
+  <!ENTITY author    "ich777">
+  <!ENTITY version   "2022.12.08">
+  <!ENTITY launch    "Settings/sundtek-driver">
+  <!ENTITY gitURL    "https://github.com/&author;/unraid-&name;/releases/download">
+  <!ENTITY pluginURL "https://raw.githubusercontent.com/&author;/unraid-&name;/master/&name;.plg">
+  <!ENTITY md5       "049f349eaf14a49407cf558ce9f4c03e">
+  <!ENTITY plugin    "/boot/config/plugins/&name;">
+  <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
+]>
+
+<PLUGIN  name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.11.5" support="https://forums.unraid.net/topic/99027-plugin-dvb-driver/">
+
+<CHANGES>
+
+###2022.12.08
+- Initial release
+
+</CHANGES>
+
+<FILE Run="/bin/bash">
+<INLINE>
+rm -f $(ls /boot/config/plugins/&name;/&name;*.txz 2>/dev/null|grep -v '&version;')
+</INLINE>
+</FILE>
+
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
+<URL>&gitURL;/&version;/&name;-&version;.txz</URL>
+<MD5>&md5;</MD5>
+</FILE>
+
+<FILE Name="&emhttp;/README.md">
+<INLINE>
+**Sundtek Driver**
+
+Sundtek DVB Drivers for Unraid.  
+Please visit the Plugin page after installing the plugin to configure your TVHeadend instance for use with this plugin.
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+
+# Create settings file if not found
+if [ ! -f "&plugin;/settings.cfg" ]; then
+  echo 'installed_adapters=auto
+first_adapter=auto' > "&plugin;/settings.cfg"
+fi
+
+# Create directories
+mkdir -p /tmp/sundtek /dev/dvb
+
+# Get Sundtek devices count
+if [ "$(cat &plugin;/settings.cfg | grep "installed_adapters" | cut -d '=' -f2)" == "auto" ]; then
+  ADAPTER_USB=$(lsusb | grep -i "sundtek" | wc -l)
+  ADAPTER_PCI=$(lspci | grep -i "sundtek" | wc -l)
+  ADAPTERS_INST=$(cat /tmp/sundtek/devices_list 2&gt;/dev/null | wc -l)
+  DEVICE_COUNT=$(($ADAPTER_USB + $ADAPTER_PCI - $ADAPTERS_INST))
+else
+  ADAPTERS_INST=$(cat /tmp/sundtek/devices_list 2&gt;/dev/null | wc -l)
+  INSTALLED_ADAPTERS=$(cat &plugin;/settings.cfg | grep "installed_adapters" | cut -d '=' -f2)
+  DEVICE_COUNT=$(($INSTALLED_ADAPTERS - $ADAPTERS_INST))
+fi
+
+# Get first available DVB device
+if [ "$(cat &plugin;/settings.cfg | grep "first_adapter" | cut -d '=' -f2)" == "auto" ]; then
+  DVB_DEV=$(find /dev/dvb -mindepth 1 -maxdepth 1 -type d 2&gt;/dev/null | wc -l)
+else
+  DVB_DEV=$(cat &plugin;/settings.cfg | grep "first_adapter" | cut -d '=' -f2)
+fi
+
+# Create adapters and dummy devices
+if [ ${DEVICE_COUNT} -gt 0 ]; then
+  for i in ${DEVICE_COUNT}
+  do
+    echo "---Creating Sundtek DVB dummy device adapter${DVB_DEV}---"
+    mkdir -p /dev/dvb/adapter${DVB_DEV}
+    mknod /dev/dvb/adapter${DVB_DEV}/frontend0 c 212 $(($DVB_DEV*6+1))
+    mknod /dev/dvb/adapter${DVB_DEV}/dvr0 c 212 $(($DVB_DEV*6+5))
+    mknod /dev/dvb/adapter${DVB_DEV}/demux0 c 212 $(($DVB_DEV*6+3))
+    echo "adapter${DVB_DEV}" &gt;&gt; /tmp/sundtek/devices_list
+    DVB_DEV=$(($DVB_DEV + 1))
+  done
+fi
+
+# Download Sundtek installation script
+if [ ! -f &plugin;/sundtek_install.sh ]; then
+  echo "---Downloading Sundtek installation script---"
+  wget -q -O &plugin;/sundtek_install.sh http://sundtek.de/media/sundtek_netinst.sh
+  sed -i "s/NETINSTALL=1/NETINSTALL=0/g" &plugin;/sundtek_install.sh/sundtek_install.sh
+else
+  echo "---Sundtek installastion script found locally---"
+fi
+
+# Copy over 99-sundtekdriverinstall
+cp /usr/local/emhttp/plugins/sundtek-driver/include/99-sundtekdriverinstall /tmp/sundtek/99-sundtekdriverinstall
+chmod +x /tmp/sundtek/99-sundtekdriverinstall
+
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+
+echo "---------------------------------"
+echo "---Uninstalling Sundtek-Driver---"
+echo "---------------------------------"
+# Remove plugin related files
+removepkg &name;-&version; >/dev/null 2>&amp;1
+rm -rf &emhttp;
+rm -rf &plugin;
+echo
+echo "------------------------------------------------------------------------"
+echo "--------Sundtek-Driver uninstalled, please reboot your server!----------"
+echo "------------------------------------------------------------------------"
+echo
+
+</INLINE>
+</FILE>
+</PLUGIN>
