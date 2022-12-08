@@ -1,0 +1,60 @@
+Menu="Utilities"
+Title="Sundtek Driver"
+Icon="sundtek-driver.png"
+---
+<?php
+$containers = shell_exec("docker ps --all --format '{{.Names}}' | grep -iE 'tvheadend|headend'");
+?>
+<script>
+//Don't execute commands again if page is refreshed
+    if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+    }
+</script>
+
+<script>
+function installDriver(form) {
+    var container = form.container_name.value;
+    openBox("/usr/local/emhttp/plugins/sundtek-driver/include/install.sh&arg1="+container,"Installing Driver",600,800,true);
+    return false;
+    }
+</script>
+
+<p><a href="https://forums.unraid.net/topic/99027-plugin-dvb-driver/" target="_blank"><img style="display: block; margin-left: auto; margin-right: auto;" src="/plugins/sundtek-driver/images/sundtek.png" alt="" width="200" /></a></p>
+
+<? if (isset($containers ) === true && trim($containers ) !== ''): ?>
+<form id="s" method="post" >
+Install driver to this container: 
+<select name="container_name"> 
+<?php
+$output = rtrim($containers);
+$output = explode("\n", $output);
+foreach($output as $lines){
+?>
+<option value="<?php echo $lines;?>"><?php echo $lines;?></option> 
+<?php
+}
+?>
+</select>
+<input type="button" value="Install" onclick="installDriver(this.form)">
+<br/><em>By clicking Install you accept the <a href="/plugins/sundtek-driver/legalnoticesundtek.html" target="_blank">Legal notice</a> from the Sundtek install script.</em>
+</form>
+<p>This installation is necessary after installing the plugin for the first time since it copies over the installation script for the driver to the selected container and installs it, this is also necessary after each container update &lt;- <em>to circumvent that read the <strong>Recommended</strong> part from belo</em>w.</p>
+<p>&nbsp;</p>
+<p><strong>ATTENTION:</strong> Please don't forget to pass through the device:</p>
+<p style="padding-left: 40px;">/dev/bus/usb</p>
+<p>in the template, otherwise your tuner(s) will not be recognized!<br />Also make sure that /dev/dvb is passed through in the template which should be the case by default.<br /><br /><strong>Recommended:</strong> If you are using a standard TVHeadend container, for example from Linuxserver.io it is strongly recommended to create a new Path in the template with the following entries:</p>
+<p style="padding-left: 40px;">Container Path: <code>/etc/cont-init.d/99-sundtekdriverinstall</code><br />Host Path: <code>/tmp/sundtek/99-sundtekdriverinstall</code></p>
+<p>This will ensure that your tuner(s) is/are still recognized after a container update.</p>
+<p>&nbsp;</p>
+<p><strong>Detected Adapters:</strong></p>
+<p>
+<?php
+echo nl2br(file_get_contents("/tmp/sundtek/devices_list"));
+?>
+</p>
+<? else: ?>
+<h3 style="text-align: center;"><span style="color: #ff0000;">No TVHeadend container found!</span></h3>
+<h3 style="text-align: center;">Please install a TVHeadend container first and come back to this site after you've installed it!</h3>
+<p style="text-align: center;"><em>(If you have already a TVHeadend container installed and still see this massage make sure that it is named 'tvheadend' or it contains at least 'headend' in it's container name!)</em></p>
+<? endif; ?>
