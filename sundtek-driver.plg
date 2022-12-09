@@ -2,11 +2,11 @@
 <!DOCTYPE PLUGIN [
   <!ENTITY name      "sundtek-driver">
   <!ENTITY author    "ich777">
-  <!ENTITY version   "2022.12.08">
+  <!ENTITY version   "2022.12.09">
   <!ENTITY launch    "Settings/sundtek-driver">
   <!ENTITY gitURL    "https://github.com/&author;/unraid-&name;/releases/download">
   <!ENTITY pluginURL "https://raw.githubusercontent.com/&author;/unraid-&name;/master/&name;.plg">
-  <!ENTITY md5       "69f282b7c841e37fe2dedc5746ee1f52">
+  <!ENTITY md5       "0cb4a82c785b85fe8bbc43fc2781e567">
   <!ENTITY plugin    "/boot/config/plugins/&name;">
   <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
@@ -14,6 +14,11 @@
 <PLUGIN  name="&name;" author="&author;" version="&version;" launch="&launch;" pluginURL="&pluginURL;" min="6.11.5" support="https://forums.unraid.net/topic/99027-plugin-dvb-driver/">
 
 <CHANGES>
+
+###2022.12.09
+- Fixed a bug in Docker installation script where the script was not copyied over
+- Added button to the plugin page to update the Sundtek installation script
+- Code cleanup
 
 ###2022.12.08
 - Initial release
