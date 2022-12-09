@@ -20,6 +20,13 @@ function installDriver(form) {
     }
 </script>
 
+<script>
+function updateScript(form) {
+    openBox("/usr/local/emhttp/plugins/sundtek-driver/include/update_script.sh","Updating Sundtek Script",600,800,true);
+    return false;
+    }
+</script>
+
 <p><a href="https://forums.unraid.net/topic/99027-plugin-dvb-driver/" target="_blank"><img style="display: block; margin-left: auto; margin-right: auto;" src="/plugins/sundtek-driver/images/sundtek.png" alt="" width="200" /></a></p>
 
 <? if (isset($containers ) === true && trim($containers ) !== ''): ?>
@@ -53,6 +60,15 @@ foreach($output as $lines){
 echo nl2br(file_get_contents("/tmp/sundtek/devices_list"));
 ?>
 </p>
+
+<form id="s" method="post">
+<p style="text-align: right;">Update Sundtek Driver Script: 
+<input type="button" value="Update" onclick="updateScript(this.form)">
+<br/><em>This is only necessary if you have issues with the driver after a Unraid update.</em>
+</p>
+
+</form>
+
 <? else: ?>
 <h3 style="text-align: center;"><span style="color: #ff0000;">No TVHeadend container found!</span></h3>
 <h3 style="text-align: center;">Please install a TVHeadend container first and come back to this site after you've installed it!</h3>
