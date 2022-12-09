@@ -17,6 +17,7 @@
 
 ###2022.12.09
 - Fixed a bug in Docker installation script where the script was not copyied over
+- Fixed a bug where only one adapter get created when more adapters are connected
 - Changed Docker script to not display output at container startup
 - Added button to the plugin page to update the Sundtek installation script
 - Code cleanup
