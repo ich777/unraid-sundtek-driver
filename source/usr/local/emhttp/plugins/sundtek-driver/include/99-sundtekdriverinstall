@@ -1,4 +1,4 @@
 #!/bin/bash
 if [ -e "/usr/bin/tvheadend" ] && [ ! -e "/usr/bin/tvheadend.bin" ]; then
-  AUTO_INST=1 NETINSTALL=0 /config/sundtek_install.sh -docker -use-custom-path /config
+  AUTO_INST=1 NETINSTALL=0 /config/sundtek_install.sh -docker -use-custom-path /config >/dev/null
 fi

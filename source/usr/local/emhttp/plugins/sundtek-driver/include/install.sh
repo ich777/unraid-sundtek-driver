@@ -11,7 +11,9 @@ fi
 echo
 echo "Copying sundtek_install.sh to container path /config."
 CONFIG_PATH=$(docker inspect --format '{{json .Mounts}}' ${1} | jq -r '.[] | select(.Destination=="/config") | .Source')
-cp /tmp/sundtek/sundtek_install.sh ${CONFIG_PATH}/sundtek_install.sh >/dev/null
+cp /boot/config/plugins/sundtek-driver/sundtek_install.sh ${CONFIG_PATH}/sundtek_install.sh >/dev/null
+chmod +x ${CONFIG_PATH}/sundtek_install.sh
+chown 99:100 ${CONFIG_PATH}/sundtek_install.sh
 echo
 echo "Checking if Sundtek driver is already installed, please wait..."
 echo
@@ -44,6 +46,3 @@ echo "|"
 echo "| This will ensure that your tuner(s) are still recognized after a"
 echo "| container update."
 echo "+----------------------------------------------------------------------"
-
-CONFIG_PATH=$(docker inspect --format '{{json .Mounts}}' ${1} | jq -r '.[] | select(.Destination=="/config") | .Source')
-cp /tmp/sundtek/sundtek_install.sh ${CONFIG_PATH}/sundtek_install.sh
