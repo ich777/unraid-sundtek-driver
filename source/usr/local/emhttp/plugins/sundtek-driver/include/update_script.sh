@@ -3,7 +3,7 @@ echo "Updating Sundtek install script, please wait..."
 echo
 if wget -q -O /boot/config/plugins/sundtek-driver/sundtek_install.sh http://sundtek.de/media/sundtek_netinst.sh ; then
   echo "Successfully updated the Sundtek install script!"
-  sed -i "s/NETINSTALL=1/NETINSTALL=0/g" /boot/config/plugins/sundtek-driver/sundtek_install.sh/sundtek_install.sh
+  sed -i "s/NETINSTALL=1/NETINSTALL=0/g" /boot/config/plugins/sundtek-driver/sundtek_install.sh
 else
   echo "Something went wrong with the download from the Sundtek install script!"
   rm -f /boot/config/plugins/sundtek-driver/sundtek_install.sh
