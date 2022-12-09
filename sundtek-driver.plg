@@ -6,7 +6,7 @@
   <!ENTITY launch    "Settings/sundtek-driver">
   <!ENTITY gitURL    "https://github.com/&author;/unraid-&name;/releases/download">
   <!ENTITY pluginURL "https://raw.githubusercontent.com/&author;/unraid-&name;/master/&name;.plg">
-  <!ENTITY md5       "0cb4a82c785b85fe8bbc43fc2781e567">
+  <!ENTITY md5       "19a282280a1861229b3dbb039a20fa71">
   <!ENTITY plugin    "/boot/config/plugins/&name;">
   <!ENTITY emhttp    "/usr/local/emhttp/plugins/&name;">
 ]>
